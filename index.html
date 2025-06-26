@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Random Matrix Generator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script id="MathJax-script" async 
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center px-4">
+  <div class="bg-white rounded-lg shadow-md p-8 max-w-2xl w-full">
+    <h1 class="text-2xl font-bold text-gray-800 mb-6 text-center">Random Matrix Generator</h1>
+
+    <div class="space-y-4">
+      <div class="flex items-center justify-between">
+        <label for="rows" class="text-gray-700 w-1/2">Number of Rows:</label>
+        <input type="number" id="rows" value="3" min="1" step="1"
+               class="form-input w-16 border rounded px-2 py-1 bg-white">
+        <label class="text-gray-600 flex items-center">
+          <input type="checkbox" id="randomRows" class="mr-1"> Random
+        </label>
+      </div>
+
+      <div class="flex items-center justify-between">
+        <label for="cols" class="text-gray-700 w-1/2">Number of Columns:</label>
+        <input type="number" id="cols" value="3" min="1" step="1"
+               class="form-input w-16 border rounded px-2 py-1 bg-white">
+        <label class="text-gray-600 flex items-center">
+          <input type="checkbox" id="randomCols" class="mr-1"> Random
+        </label>
+      </div>
+
+      <div class="flex items-center justify-between">
+        <label for="entryType" class="text-gray-700 w-1/2">Entry Type:</label>
+        <select id="entryType" class="form-select w-1/2 border rounded px-2 py-1">
+          <option value="natural">Natural Numbers</option>
+          <option value="integer">Integers</option>
+          <option value="rational">Rationals</option>
+          <option value="custom">Custom</option>
+        </select>
+      </div>
+
+      <div id="customValuesGroup" class="flex items-center justify-between hidden">
+        <label for="customValues" class="text-gray-700 w-1/2">Custom Values:</label>
+        <input type="text" id="customValues" placeholder="e.g., 1,2,1/2,-3"
+               class="form-input w-1/2 border rounded px-2 py-1">
+      </div>
+
+      <div class="flex items-center justify-between">
+        <label for="matrixCount" class="text-gray-700 w-1/2">Number of Matrices:</label>
+        <input type="number" id="matrixCount" value="1" min="1" step="1"
+               class="form-input w-16 border rounded px-2 py-1">
+      </div>
+
+      <div class="text-center">
+        <button id="generateBtn" onclick="generateMatrix()"
+          class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded">
+          Generate Matrix
+        </button>
+      </div>
+
+      <div id="output" class="mt-6 text-center text-lg text-gray-800 space-y-6"></div>
+    </div>
+  </div>
+
+  <script>
+    const randomRows = document.getElementById("randomRows");
+    const randomCols = document.getElementById("randomCols");
+    const rowsInput = document.getElementById("rows");
+    const colsInput = document.getElementById("cols");
+    const matrixCountInput = document.getElementById("matrixCount");
+    const generateBtn = document.getElementById("generateBtn");
+
+    function toggleInputDisable() {
+      rowsInput.disabled = randomRows.checked;
+      colsInput.disabled = randomCols.checked;
+
+      rowsInput.classList.toggle("bg-gray-200", randomRows.checked);
+      colsInput.classList.toggle("bg-gray-200", randomCols.checked);
+      rowsInput.classList.toggle("bg-white", !randomRows.checked);
+      colsInput.classList.toggle("bg-white", !randomCols.checked);
+    }
+
+    function updateButtonLabel() {
+      const count = parseInt(matrixCountInput.value);
+      generateBtn.textContent = count > 1 ? "Generate Matrices" : "Generate Matrix";
+    }
+
+    randomRows.addEventListener("change", toggleInputDisable);
+    randomCols.addEventListener("change", toggleInputDisable);
+    matrixCountInput.addEventListener("input", updateButtonLabel);
+
+    document.getElementById("entryType").addEventListener("change", function () {
+      document.getElementById("customValuesGroup").style.display = this.value === "custom" ? "flex" : "none";
+    });
+
+    function getRandomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+	
+	function getRandomIntInf(min) {
+	  let hasil = min;
+	  while (Math.random() < 1/2){hasil ++}
+      return getRandomInt(min, hasil);
+    }
+
+    function getRandomRational() {
+      const numerator = getRandomInt(-9, 9);
+      const denominator = getRandomInt(1, 9);
+      return `${numerator}/${denominator}`;
+    }
+
+	rationalSet = [[0,1]];
+	
+	function rationalSetUpdate(){
+		var rationalSetNew = [];
+		pilihanI = Math.floor(Math.random()*rationalSet.length);
+		for (let i = 0; i < rationalSet.length; i++){
+			rationalSetNew.push(rationalSet[i])
+			
+			if (i == pilihanI){
+				if (i < rationalSet.length - 1){
+					rationalSetNew.push([rationalSet[i][0] + rationalSet[i+1][0],rationalSet[i][1] + rationalSet[i+1][1]]);
+				}
+				else {
+					rationalSetNew.push([rationalSet[i][0] + 1,rationalSet[i][1]]);
+				}
+			}
+		}
+		rationalSet = rationalSetNew;
+		if (Math.random() < 1/2){rationalSetUpdate();}
+	}
+	
+	rationalSetUpdate();
+
+    function getRandomEntry(type, customList = [], numRow, numCol) {
+	  let hasil = '';
+      switch (type) {
+        case "natural": 
+			hasil = '' + Math.floor(Math.random()*10);
+			while (Math.random() < 1/(numRow*numCol) && hasil != '0'){hasil = '' + hasil + Math.floor(Math.random()*10)}
+			return hasil;
+        case "integer": 
+			hasil = '';
+			hasil = getRandomEntry("natural", customList, numRow, numCol)
+			if (Math.random() < 1/2 && hasil != '0'){hasil = '-' + hasil}
+			return hasil;
+        case "rational": 
+		    let randomNumberRat = rationalSet[Math.floor(Math.random()*rationalSet.length)]; 
+			let randomNumber = ' \\frac{' + randomNumberRat[0] + '}{' + randomNumberRat[1] + '}';
+			if (randomNumberRat[1] == 1){randomNumber = randomNumberRat[0]}
+			if (Math.random() < 1/2){randomNumber = '-' + randomNumber;}
+			if (randomNumberRat[0] == 0){randomNumber = '0'}
+			return randomNumber;
+        case "custom": return customList[getRandomInt(0, customList.length - 1)];
+      }
+    }
+
+    function validateNatural(value, fallback = 1) {
+      const n = parseInt(value);
+      return Number.isInteger(n) && n > 0 ? n : fallback;
+    }
+
+    function generateMatrix() {
+	  const type = document.getElementById("entryType").value;
+	  const customText = document.getElementById("customValues").value;
+	  const customList = customText.split(",").map(x => x.trim()).filter(x => x);
+	  const count = validateNatural(matrixCountInput.value, 1);
+
+	  const output = document.getElementById("output");
+	  output.innerHTML = "";
+
+	  for (let m = 0; m < count; m++) {
+		// Randomize dimensions per matrix
+		let rows = randomRows.checked ? getRandomIntInf(3) : validateNatural(rowsInput.value, 3);
+		let cols = randomCols.checked ? getRandomIntInf(3) : validateNatural(colsInput.value, 3);
+
+		let matrixLatex = "\\[\\begin{bmatrix}";
+		for (let i = 0; i < rows; i++) {
+		  const row = [];
+		  for (let j = 0; j < cols; j++) {
+			row.push(getRandomEntry(type, customList, rows, cols));
+		  }
+		  matrixLatex += row.join(" & ");
+		  matrixLatex += i < rows - 1 ? " \\\\ " : "";
+		}
+		matrixLatex += "\\end{bmatrix}\\]";
+		const div = document.createElement("div");
+		div.innerHTML = matrixLatex;
+		output.appendChild(div);
+	  }
+
+	  MathJax.typesetPromise();
+	  rationalSetUpdate();
+	}
+
+
+    // Initial setup
+    toggleInputDisable();
+    updateButtonLabel();
+  </script>
+</body>
+</html>
