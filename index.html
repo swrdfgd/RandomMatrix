@@ -139,7 +139,7 @@
       switch (type) {
         case "natural": 
 			hasil = '' + Math.floor(Math.random()*10);
-			while (Math.random() < 1/(numRow*numCol) && hasil != '0'){hasil = '' + hasil + Math.floor(Math.random()*10)}
+			while (Math.random() < Math.min(1/(numRow*numCol),0.5) && hasil != '0'){hasil = '' + hasil + Math.floor(Math.random()*10)}
 			return hasil;
         case "integer": 
 			hasil = '';
