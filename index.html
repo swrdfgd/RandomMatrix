@@ -176,8 +176,8 @@
 		// Randomize dimensions per matrix
 		let rows = randomRows.checked ? getRandomIntInf(1,3) : validateNatural(rowsInput.value, 3);
 		let cols = randomCols.checked ? getRandomIntInf(1,3) : validateNatural(colsInput.value, 3);
-		if (Math.random() > 1/rows){rationalSetUpdate();}
-		if (Math.random() > 1/cols){rationalSetUpdate();}
+		if (Math.random() > Math.min(1/rows,0.5)){rationalSetUpdate();}
+		if (Math.random() > Math.min(1/cols,0.5)){rationalSetUpdate();}
 		
 
 		let matrixLatex = "\\[\\begin{bmatrix}";
